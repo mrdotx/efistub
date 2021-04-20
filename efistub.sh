@@ -3,12 +3,9 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-04-20T17:24:17+0200
+# date:   2021-04-20T20:23:21+0200
 
 workdir="$(dirname "$0")"
-
-# source general config file
-. "$workdir/efistub.conf"
 
 # efibootmgr functions
 get_entries() {
@@ -38,12 +35,12 @@ delete_boot_entries() {
 create_boot_entry() {
     printf "   "
     efibootmgr \
-        --disk "$loader_disk" \
-        --part "$loader_partition" \
         --create \
         --label "$1" \
-        --loader "$2" \
-        --unicode "$3" \
+        --disk "$2" \
+        --part "$3" \
+        --loader "$4" \
+        --unicode "$5" \
         --quiet
     get_entry "$1"
 }
@@ -62,9 +59,12 @@ create_boot_entries() {
         . "$boot_entry"
         # shellcheck disable=SC2154
         create_boot_entry \
-            "$label" \
-            "$loader" \
+            "${label:=Linux}" \
+            "${loader_disk:=/dev/sda}" \
+            "${loader_partition:=1}" \
+            "${loader:=/vmlinuz-linux}" \
             "$(pivot "$options" " ")"
+        unset label loader_disk loader_partition loader options
     done
 }
 
