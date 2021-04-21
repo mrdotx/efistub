@@ -3,9 +3,21 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-04-21T07:43:14+0200
+# date:   2021-04-21T10:40:51+0200
 
-workdir="$(dirname "$0")"
+config_directory="$(dirname "$0")/entries"
+
+script=$(basename "$0")
+help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
+  Usage:
+    $script [config directory]
+
+  Settings:
+  [config directory] = directory with config files
+                       (default: $config_directory)
+
+  Examples:
+    $script /boot/EFI/loader"
 
 # efibootmgr functions
 get_entries() {
@@ -54,7 +66,7 @@ create_boot_order() {
 }
 
 create_boot_entries() {
-    for f in "$workdir"/entries/*.conf; do
+    for f in "$config_directory"/*.conf; do
         # shellcheck disable=SC1090
         . "$f"
         # shellcheck disable=SC2154
@@ -85,18 +97,27 @@ pivot() {
 }
 
 # main
-if [ ! "$(id -u)" = 0 ]; then
-    printf "this script needs root privileges to run\n"
-    exit 1
-else
-    printf ":: delete boot numbers\n   "
-    delete_boot_entries
-    printf "\n"
+case "$1" in
+    -h | --help)
+        printf "%s\n" "$help"
+        ;;
+    *)
+        if [ ! "$(id -u)" = 0 ]; then
+            printf "this script needs root privileges to run\n"
+            exit 1
+        else
+            [ -n "$1" ] \
+                && config_directory="$1"
 
-    printf ":: create boot entries\n"
-    create_boot_entries
-    printf "\n"
+            printf ":: delete boot numbers\n   "
+            delete_boot_entries
+            printf "\n"
 
-    printf ":: create boot order\n"
-    create_boot_order
-fi
+            printf ":: create boot entries\n"
+            create_boot_entries
+            printf "\n"
+
+            printf ":: create boot order\n"
+            create_boot_order
+        fi
+esac
