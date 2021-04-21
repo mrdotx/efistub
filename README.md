@@ -15,7 +15,7 @@ shell script to create efi boot entries with efibootmgr
 values and defaults:
 
 - label="Linux"
-- loader_disk="/dev/sda"
-- loader_partition=1
+- disk="/dev/sda"
+- partition=1
 - loader="/vmlinuz-linux"
 - options=""

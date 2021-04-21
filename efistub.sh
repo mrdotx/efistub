@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-04-20T20:23:21+0200
+# date:   2021-04-21T07:43:14+0200
 
 workdir="$(dirname "$0")"
 
@@ -54,17 +54,17 @@ create_boot_order() {
 }
 
 create_boot_entries() {
-    for boot_entry in "$workdir"/entries/*.conf; do
+    for f in "$workdir"/entries/*.conf; do
         # shellcheck disable=SC1090
-        . "$boot_entry"
+        . "$f"
         # shellcheck disable=SC2154
         create_boot_entry \
             "${label:=Linux}" \
-            "${loader_disk:=/dev/sda}" \
-            "${loader_partition:=1}" \
+            "${disk:=/dev/sda}" \
+            "${partition:=1}" \
             "${loader:=/vmlinuz-linux}" \
             "$(pivot "$options" " ")"
-        unset label loader_disk loader_partition loader options
+        unset label disk partition loader options
     done
 }
 
