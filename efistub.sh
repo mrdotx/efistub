@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-04-21T10:40:51+0200
+# date:   2021-04-22T10:16:30+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -22,13 +22,13 @@ help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
 # efibootmgr functions
 get_entries() {
     efibootmgr \
-        | grep "\*" \
+        | grep "\* " \
         | sed 's/^Boot//g;s/\*.*//g'
 }
 
 get_entry() {
     efibootmgr \
-        | grep "$1$" \
+        | grep "\* $1$" \
         | sed 's/^Boot//g;s/\*//g'
 }
 
