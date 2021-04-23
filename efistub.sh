@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-04-22T10:16:30+0200
+# date:   2021-04-23T09:18:03+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -109,7 +109,7 @@ case "$1" in
             [ -n "$1" ] \
                 && config_directory="$1"
 
-            printf ":: delete boot numbers\n   "
+            printf ":: delete boot entries\n   "
             delete_boot_entries
             printf "\n"
 
