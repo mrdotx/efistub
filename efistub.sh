@@ -3,23 +3,36 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-04-23T09:18:03+0200
+# date:   2021-04-26T20:01:54+0200
 
 config_directory="$(dirname "$0")/entries"
 
 script=$(basename "$0")
 help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
   Usage:
-    $script [config directory]
+    $script [config directory] [-b]
 
   Settings:
   [config directory] = directory with config files
                        (default: $config_directory)
+  [-b]               = set next boot entry
 
   Examples:
-    $script /boot/EFI/loader"
+    $script /boot/EFI/loader
+    $script -b"
 
 # efibootmgr functions
+set_boot_bext() {
+    efibootmgr \
+        | grep "\* " \
+        | sed 's/^Boot/   /g;s/\*//g'
+    printf "\nboot next XXXX (hex): " \
+        && read -r bootnext \
+        && efibootmgr \
+            --bootnext "$bootnext" \
+            --quiet
+}
+
 get_entries() {
     efibootmgr \
         | grep "\* " \
@@ -81,6 +94,12 @@ create_boot_entries() {
 }
 
 # helper functions
+check_root() {
+        [ ! "$(id -u)" = 0 ] \
+            && printf "this script needs root privileges to run\n" \
+            && exit 1
+}
+
 pivot() {
     printf "%s\n" "$1" \
         | awk '{gsub(/^ +| +$/,"")} !/^($|#)/ {print $0}' \
@@ -101,23 +120,26 @@ case "$1" in
     -h | --help)
         printf "%s\n" "$help"
         ;;
+    -b)
+        check_root
+
+        printf ":: set boot next\n"
+        set_boot_bext
+        ;;
     *)
-        if [ ! "$(id -u)" = 0 ]; then
-            printf "this script needs root privileges to run\n"
-            exit 1
-        else
-            [ -n "$1" ] \
-                && config_directory="$1"
+        check_root
 
-            printf ":: delete boot entries\n   "
-            delete_boot_entries
-            printf "\n"
+        [ -n "$1" ] \
+            && config_directory="$1"
 
-            printf ":: create boot entries\n"
-            create_boot_entries
-            printf "\n"
+        printf ":: delete boot entries\n   "
+        delete_boot_entries
+        printf "\n"
 
-            printf ":: create boot order\n"
-            create_boot_order
-        fi
+        printf ":: create boot entries\n"
+        create_boot_entries
+        printf "\n"
+
+        printf ":: create boot order\n"
+        create_boot_order
 esac
