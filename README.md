@@ -19,7 +19,3 @@ values and defaults:
 - partition=1
 - loader="/vmlinuz-linux"
 - options=""
-
-## related projects
-
-- [pacman-hooks](https://github.com/mrdotx/pacman-hooks)
