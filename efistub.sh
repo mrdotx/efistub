@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-05-11T10:01:12+0200
+# date:   2021-05-11T10:19:29+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -73,10 +73,9 @@ create_boot_entry() {
 
 create_boot_order() {
     boot_order="$(pivot "$(get_entries)" ",")"
-    printf "  -> %s\n" "$boot_order"
     efibootmgr \
         --bootorder "$boot_order" \
-        --quiet
+        --quiet >/dev/null 2>&1
 }
 
 create_boot_entries() {
@@ -133,12 +132,9 @@ case "$1" in
         [ -n "$1" ] \
             && config_directory="$1"
 
-        printf "==> delete boot entries\n"
+        printf "==> delete old boot entries\n"
         delete_boot_entries
-
-        printf "==> create boot entries\n"
+        printf "==> create new boot entries\n"
         create_boot_entries
-
-        printf "==> create boot order\n"
         create_boot_order
 esac
