@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-04-26T20:01:54+0200
+# date:   2021-05-11T10:01:12+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -22,10 +22,10 @@ help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
     $script -b"
 
 # efibootmgr functions
-set_boot_bext() {
+set_boot_next() {
     efibootmgr \
         | grep "\* " \
-        | sed 's/^Boot/   /g;s/\*//g'
+        | sed 's/^Boot/  -> /g;s/\*//g'
     printf "\nboot next XXXX (hex): " \
         && read -r bootnext \
         && efibootmgr \
@@ -46,6 +46,7 @@ get_entry() {
 }
 
 delete_boot_entries() {
+    printf "  -> "
     for i in $(get_entries)
     do
         printf "%s " "$i"
@@ -58,7 +59,7 @@ delete_boot_entries() {
 }
 
 create_boot_entry() {
-    printf "   "
+    printf "  -> "
     efibootmgr \
         --create \
         --label "$1" \
@@ -72,7 +73,7 @@ create_boot_entry() {
 
 create_boot_order() {
     boot_order="$(pivot "$(get_entries)" ",")"
-    printf "   %s\n" "$boot_order"
+    printf "  -> %s\n" "$boot_order"
     efibootmgr \
         --bootorder "$boot_order" \
         --quiet
@@ -123,8 +124,8 @@ case "$1" in
     -b)
         check_root
 
-        printf ":: set boot next\n"
-        set_boot_bext
+        printf "==> set boot next\n"
+        set_boot_next
         ;;
     *)
         check_root
@@ -132,14 +133,12 @@ case "$1" in
         [ -n "$1" ] \
             && config_directory="$1"
 
-        printf ":: delete boot entries\n   "
+        printf "==> delete boot entries\n"
         delete_boot_entries
-        printf "\n"
 
-        printf ":: create boot entries\n"
+        printf "==> create boot entries\n"
         create_boot_entries
-        printf "\n"
 
-        printf ":: create boot order\n"
+        printf "==> create boot order\n"
         create_boot_order
 esac
