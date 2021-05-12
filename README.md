@@ -1,5 +1,7 @@
 # efistub
 
+![screenshot](screenshot.png)
+
 shell script to create efi boot entries with efibootmgr
 
 | folder name | comment                                                                 |
