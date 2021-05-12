@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-05-11T10:19:29+0200
+# date:   2021-05-12T15:20:03+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -26,10 +26,10 @@ set_boot_next() {
     efibootmgr \
         | grep "\* " \
         | sed 's/^Boot/  -> /g;s/\*//g'
-    printf "\nboot next XXXX (hex): " \
-        && read -r bootnext \
+    printf "==> set boot next XXXX (hex): " \
+        && read -r boot_next \
         && efibootmgr \
-            --bootnext "$bootnext" \
+            --bootnext "$boot_next" \
             --quiet
 }
 
@@ -42,6 +42,17 @@ get_entries() {
 get_entry() {
     efibootmgr \
         | grep "\* $1$" \
+        | sed 's/^Boot//g;s/\*//g'
+}
+
+get_boot_next() {
+    boot_next=$( \
+        efibootmgr \
+            | grep "BootNext" \
+            | cut -d ' ' -f2 \
+    )
+    efibootmgr \
+        | grep "Boot$boot_next\* " \
         | sed 's/^Boot//g;s/\*//g'
 }
 
@@ -123,8 +134,9 @@ case "$1" in
     -b)
         check_root
 
-        printf "==> set boot next\n"
+        printf "==> boot next [%s]\n" "$(get_boot_next)"
         set_boot_next
+        printf "  -> %s\n" "$(get_boot_next)"
         ;;
     *)
         check_root
