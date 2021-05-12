@@ -3,19 +3,19 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-05-12T15:20:03+0200
+# date:   2021-05-12T20:50:13+0200
 
 config_directory="$(dirname "$0")/entries"
 
 script=$(basename "$0")
 help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
   Usage:
-    $script [config directory] [-b]
+    $script <path> [-b] [hex]
 
   Settings:
-  [config directory] = directory with config files
-                       (default: $config_directory)
-  [-b]               = set next boot entry
+  <path> = directory with config files
+           (default: $config_directory)
+  [-b]   = set next boot entry
 
   Examples:
     $script /boot/EFI/loader
@@ -26,11 +26,22 @@ set_boot_next() {
     efibootmgr \
         | grep "\* " \
         | sed 's/^Boot/  -> /g;s/\*//g'
-    printf "==> set boot next XXXX (hex): " \
+    printf "==> set boot next to XXXX (hex): " \
         && read -r boot_next \
         && efibootmgr \
             --bootnext "$boot_next" \
             --quiet
+}
+
+get_boot_next() {
+    boot_next=$( \
+        efibootmgr \
+            | grep "BootNext" \
+            | cut -d ' ' -f2 \
+    )
+    efibootmgr \
+        | grep "Boot$boot_next\* " \
+        | sed 's/^Boot//g;s/\*//g'
 }
 
 get_entries() {
@@ -42,17 +53,6 @@ get_entries() {
 get_entry() {
     efibootmgr \
         | grep "\* $1$" \
-        | sed 's/^Boot//g;s/\*//g'
-}
-
-get_boot_next() {
-    boot_next=$( \
-        efibootmgr \
-            | grep "BootNext" \
-            | cut -d ' ' -f2 \
-    )
-    efibootmgr \
-        | grep "Boot$boot_next\* " \
         | sed 's/^Boot//g;s/\*//g'
 }
 
@@ -134,7 +134,10 @@ case "$1" in
     -b)
         check_root
 
-        printf "==> boot next [%s]\n" "$(get_boot_next)"
+        boot_next="$(get_boot_next)"
+        [ -n "$boot_next" ] \
+            && boot_next=$(printf " -> %s" "$boot_next")
+        printf "==> boot next%s\n" "$boot_next"
         set_boot_next
         printf "  -> %s\n" "$(get_boot_next)"
         ;;
