@@ -1,6 +1,6 @@
 # efistub
 
-![screenshot](screenshot.png)
+![screenshot](screenshot.jpg)
 
 shell script to create efi boot entries with efibootmgr
 
