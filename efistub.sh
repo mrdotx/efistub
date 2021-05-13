@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-05-12T20:50:13+0200
+# date:   2021-05-13T07:59:17+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -22,6 +22,35 @@ help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
     $script -b"
 
 # efibootmgr functions
+get_entries() {
+    case "$1" in
+        --name)
+            efibootmgr \
+                | grep "\* $2$" \
+                | sed 's/^Boot//g;s/\*//g'
+            ;;
+        --hex)
+            efibootmgr \
+                | grep "Boot$2\* " \
+                | sed 's/^Boot//g;s/\*//g'
+            ;;
+        *)
+            efibootmgr \
+                | grep "\* " \
+                | sed 's/^Boot//g;s/\*.*//g'
+            ;;
+    esac
+}
+
+get_boot_next() {
+    boot_next=$( \
+        efibootmgr \
+            | grep "BootNext" \
+            | cut -d ' ' -f2 \
+    )
+    get_entries --hex "$boot_next"
+}
+
 set_boot_next() {
     efibootmgr \
         | grep "\* " \
@@ -33,53 +62,32 @@ set_boot_next() {
             --quiet
 }
 
-get_boot_next() {
-    boot_next=$( \
-        efibootmgr \
-            | grep "BootNext" \
-            | cut -d ' ' -f2 \
-    )
-    efibootmgr \
-        | grep "Boot$boot_next\* " \
-        | sed 's/^Boot//g;s/\*//g'
-}
-
-get_entries() {
-    efibootmgr \
-        | grep "\* " \
-        | sed 's/^Boot//g;s/\*.*//g'
-}
-
-get_entry() {
-    efibootmgr \
-        | grep "\* $1$" \
-        | sed 's/^Boot//g;s/\*//g'
-}
-
 delete_boot_entries() {
-    printf "  -> "
     for i in $(get_entries)
     do
-        printf "%s " "$i"
+        printf "  -> %s\n" "$(get_entries --hex "$i")"
         efibootmgr \
             --bootnum "$i" \
             --delete-bootnum \
             --quiet
     done
-    printf "\n"
 }
 
-create_boot_entry() {
-    printf "  -> "
-    efibootmgr \
-        --create \
-        --label "$1" \
-        --disk "$2" \
-        --part "$3" \
-        --loader "$4" \
-        --unicode "$5" \
-        --quiet
-    get_entry "$1"
+create_boot_entries() {
+    for f in "$config_directory"/*.conf; do
+        # shellcheck disable=SC1090
+        . "$f"
+        efibootmgr \
+            --create \
+            --label "${label:=Linux}" \
+            --disk "${disk:=/dev/sda}" \
+            --part "${partition:=1}" \
+            --loader "${loader:=/vmlinuz-linux}" \
+            --unicode "$(pivot "${options:=}" " ")" \
+            --quiet
+        printf "  -> %s\n" "$(get_entries --name "$label")"
+        unset label disk partition loader options
+    done
 }
 
 create_boot_order() {
@@ -87,21 +95,6 @@ create_boot_order() {
     efibootmgr \
         --bootorder "$boot_order" \
         --quiet >/dev/null 2>&1
-}
-
-create_boot_entries() {
-    for f in "$config_directory"/*.conf; do
-        # shellcheck disable=SC1090
-        . "$f"
-        # shellcheck disable=SC2154
-        create_boot_entry \
-            "${label:=Linux}" \
-            "${disk:=/dev/sda}" \
-            "${partition:=1}" \
-            "${loader:=/vmlinuz-linux}" \
-            "$(pivot "$options" " ")"
-        unset label disk partition loader options
-    done
 }
 
 # helper functions
@@ -134,10 +127,7 @@ case "$1" in
     -b)
         check_root
 
-        boot_next="$(get_boot_next)"
-        [ -n "$boot_next" ] \
-            && boot_next=$(printf " -> %s" "$boot_next")
-        printf "==> boot next%s\n" "$boot_next"
+        printf "==> boot next\n"
         set_boot_next
         printf "  -> %s\n" "$(get_boot_next)"
         ;;
