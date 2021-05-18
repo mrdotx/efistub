@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-05-13T07:59:17+0200
+# date:   2021-05-18T09:29:38+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -75,7 +75,7 @@ delete_boot_entries() {
 
 create_boot_entries() {
     for f in "$config_directory"/*.conf; do
-        # shellcheck disable=SC1090
+        # shellcheck source=/dev/null
         . "$f"
         efibootmgr \
             --create \
