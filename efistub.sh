@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-06-13T21:12:22+0200
+# date:   2021-06-17T12:59:43+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -98,7 +98,7 @@ create_boot_order() {
 
 # helper functions
 check_root() {
-    [ ! "$(id -u)" = 0 ] \
+    [ "$(id -u)" -ne 0 ] \
         && printf "this script needs root privileges to run\n" \
         && exit 1
 }
