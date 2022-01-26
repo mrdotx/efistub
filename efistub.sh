@@ -3,14 +3,14 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2021-06-17T12:59:43+0200
+# date:   2022-01-26T11:31:26+0100
 
 config_directory="$(dirname "$0")/entries"
 
 script=$(basename "$0")
 help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
   Usage:
-    $script <path> [-b] [hex]
+    $script <path> [-b]
 
   Settings:
   <path> = directory with config files
