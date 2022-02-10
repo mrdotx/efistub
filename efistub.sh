@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2022-01-26T11:31:26+0100
+# date:   2022-02-10T20:35:09+0100
 
 config_directory="$(dirname "$0")/entries"
 
@@ -18,7 +18,7 @@ help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
   [-b]   = set next boot entry
 
   Examples:
-    $script /boot/EFI/loader
+    $script /boot/entries
     $script -b"
 
 # efibootmgr functions
@@ -136,9 +136,20 @@ case "$1" in
         [ -n "$1" ] \
             && config_directory="$1"
 
-        printf "==> delete old boot entries\n"
-        delete_boot_entries
-        printf "==> create new boot entries\n"
-        create_boot_entries
-        create_boot_order
+        if [ "$(find "$config_directory" \
+                -maxdepth 1 \
+                -type f \
+                -name "*.conf" \
+                -print \
+                -quit | wc -l)" -eq 1 ]; then
+            printf "==> delete old boot entries\n"
+            delete_boot_entries
+            printf "==> create new boot entries\n"
+            create_boot_entries
+            create_boot_order
+        else
+            printf "%s\n" "$help"
+            printf "==> no .conf files found\n"
+        fi
+        ;;
 esac
