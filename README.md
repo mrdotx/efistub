@@ -8,9 +8,10 @@ shell script to create efi boot entries with efibootmgr
 | :---------- | :---------------------------------------------------------------------- |
 | entries     | config files for boot entries, the order of the files is the boot order |
 
-| name         | comment                                                                       |
-| :----------- | :---------------------------------------------------------------------------- |
-| efistub.sh   | script that deletes all boot entries from efi and create new ones from config |
+| name            | comment                                                                       |
+| :-------------- | :---------------------------------------------------------------------------- |
+| efistub.sh      | script that deletes all boot entries from efi and create new ones from config |
+| 99-efistub.hook | hook to update efi boot entries on kernel update with pacman                  |
 
 ## config files
 
@@ -22,6 +23,6 @@ values and defaults:
 - loader=/vmlinuz-linux
 - options=
 
-## related projects
+## install pacman hook
 
-- [pacman-hooks](https://github.com/mrdotx/pacman-hooks)
+- copy 99-efistub.hook to folder /etc/pacman.d/hooks
