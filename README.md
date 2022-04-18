@@ -10,8 +10,9 @@ shell script to create efi boot entries with efibootmgr
 
 | name            | comment                                                                       |
 | :-------------- | :---------------------------------------------------------------------------- |
-| efistub.sh      | script that deletes all boot entries from efi and create new ones from config |
 | 99-efistub.hook | hook to update efi boot entries on kernel update with pacman                  |
+| efistub.sh      | script that deletes all boot entries from efi and create new ones from config |
+| memtest86.sh    | install or upgrade memtest86 on efi partition                                 |
 
 ## config files
 
