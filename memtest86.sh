@@ -3,9 +3,9 @@
 # path:   /home/klassiker/.local/share/repos/efistub/memtest86.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/shell
-# date:   2022-04-18T08:20:44+0200
+# date:   2022-04-21T10:42:49+0200
 
-# speed up script by not using unicode
+# speed up script by using posix
 LC_ALL=C
 LANG=C
 
