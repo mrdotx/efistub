@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2022-02-10T20:35:09+0100
+# date:   2022-07-13T12:05:31+0200
 
 config_directory="$(dirname "$0")/entries"
 
@@ -26,16 +26,19 @@ get_entries() {
     case "$1" in
         --name)
             efibootmgr \
+                | cut -d'	' -f1 \
                 | grep "\* $2$" \
                 | sed 's/^Boot//g;s/\*//g'
             ;;
         --hex)
             efibootmgr \
+                | cut -d'	' -f1 \
                 | grep "Boot$2\* " \
                 | sed 's/^Boot//g;s/\*//g'
             ;;
         *)
             efibootmgr \
+                | cut -d'	' -f1 \
                 | grep "\* " \
                 | sed 's/^Boot//g;s/\*.*//g'
             ;;
@@ -53,6 +56,7 @@ get_boot_next() {
 
 set_boot_next() {
     efibootmgr \
+        | cut -d'	' -f1 \
         | grep "\* " \
         | sed 's/^Boot/  -> /g;s/\*//g'
     printf "==> set boot next to XXXX (hex): " \
@@ -94,6 +98,7 @@ create_boot_order() {
     efibootmgr \
         --bootorder "$boot_order" \
         --quiet >/dev/null 2>&1
+        printf "  -> %s\n" "$boot_order"
 }
 
 # helper functions
@@ -146,6 +151,7 @@ case "$1" in
             delete_boot_entries
             printf "==> create new boot entries\n"
             create_boot_entries
+            printf "==> create boot order\n"
             create_boot_order
         else
             printf "%s\n" "$help"
