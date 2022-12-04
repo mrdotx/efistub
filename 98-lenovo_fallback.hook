@@ -1,0 +1,17 @@
+# path:   /home/klassiker/.local/share/repos/efistub/98-lenovo_fallback.hook
+# author: klassiker [mrdotx]
+# github: https://github.com/mrdotx/pacman-hooks
+# date:   2022-12-04T12:45:58+0100
+
+# WORKAROUND: lenovo uefi does not support the same loader for different entries
+
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = linux
+
+[Action]
+Description = Copy vmlinux-linux to vmlinuz-linux-fb...
+When = PostTransaction
+Exec = /usr/bin/cp -u /boot/vmlinuz-linux /boot/vmlinuz-linux-fb
