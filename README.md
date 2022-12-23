@@ -6,7 +6,7 @@ shell script to create efi boot entries with efibootmgr
 
 | folder name | comment                                                                 |
 | :---------- | :---------------------------------------------------------------------- |
-| entries     | config files for boot entries, the order of the files is the boot order |
+| examples    | config files for boot entries, the order of the files is the boot order |
 
 | name                    | comment                                                                       |
 | :---------------------- | :---------------------------------------------------------------------------- |
