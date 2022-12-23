@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2022-07-13T12:05:31+0200
+# date:   2022-12-23T14:07:44+0100
 
 config_directory="$(dirname "$0")/entries"
 
@@ -18,6 +18,7 @@ help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
   [-b]   = set next boot entry
 
   Examples:
+    $script
     $script /boot/entries
     $script -b"
 
