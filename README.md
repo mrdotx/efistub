@@ -13,7 +13,6 @@ shell script to create efi boot entries with efibootmgr
 | 98-lenovo_fallback.hook | workaround lenovo uefi linux fallback loader                                  |
 | 99-efistub.hook         | hook to update efi boot entries on kernel update with pacman                  |
 | efistub.sh              | script that deletes all boot entries from efi and create new ones from config |
-| memtest86.sh            | install or upgrade memtest86 on efi partition                                 |
 
 ## config files
 
