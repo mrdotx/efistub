@@ -142,7 +142,7 @@ case "$1" in
         [ -n "$1" ] \
             && config_directory="$1"
 
-        if [ "$(find "$config_directory" \
+        if [ "$(find -L "$config_directory" \
                 -maxdepth 1 \
                 -type f \
                 -name "*.conf" \
