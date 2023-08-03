@@ -1,7 +1,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/98-lenovo_fallback.hook
 # author: klassiker [mrdotx]
-# github: https://github.com/mrdotx/pacman-hooks
-# date:   2023-04-14T08:33:08+0200
+# github: https://github.com/mrdotx/efistub
+# date:   2023-08-03T08:51:03+0200
 
 # WORKAROUND: lenovo uefi does not support the same loader for different entries
 
