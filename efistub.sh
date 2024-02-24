@@ -3,7 +3,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2022-12-23T14:07:44+0100
+# date:   2024-02-23T16:43:12+0100
 
 config_directory="$(dirname "$0")/entries"
 
@@ -53,6 +53,7 @@ get_boot_next() {
             | cut -d ' ' -f2 \
     )
     get_entries --hex "$boot_next"
+    unset boot_next
 }
 
 set_boot_next() {
@@ -65,6 +66,7 @@ set_boot_next() {
         && efibootmgr \
             --bootnext "$boot_next" \
             --quiet
+    unset boot_next
 }
 
 delete_boot_entries() {
@@ -76,6 +78,7 @@ delete_boot_entries() {
             --delete-bootnum \
             --quiet
     done
+    unset i
 }
 
 create_boot_entries() {
@@ -92,6 +95,7 @@ create_boot_entries() {
         printf "  -> %s\n" "$(get_entries --name "$label")"
         unset label disk partition loader options
     done
+    unset f
 }
 
 create_boot_order() {
@@ -100,6 +104,7 @@ create_boot_order() {
         --bootorder "$boot_order" \
         --quiet >/dev/null 2>&1
         printf "  -> %s\n" "$boot_order"
+    unset boot_order
 }
 
 # helper functions
@@ -112,16 +117,15 @@ check_root() {
 pivot() {
     printf "%s\n" "$1" \
         | awk '{gsub(/^ +| +$/,"")} !/^($|#)/ {print $0}' \
-        | {
-            while IFS= read -r line; do
-                if [ -n "$entry" ]; then
-                    entry="$entry$2$(printf "%s" "$line")"
-                else
-                    entry="$(printf "%s" "$line")"
-                fi
-            done
-            printf "%s\n" "$entry"
-        }
+        | while IFS= read -r line; do
+            [ -n "$i" ] \
+                && printf "%s" "$2" "$line"
+            [ -z "$i" ] \
+                && printf "%s" "$line" \
+                && i=1
+        done
+    printf "\n"
+    unset i
 }
 
 # main
