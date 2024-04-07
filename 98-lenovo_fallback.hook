@@ -1,7 +1,7 @@
 # path:   /home/klassiker/.local/share/repos/efistub/98-lenovo_fallback.hook
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2023-08-03T08:51:03+0200
+# date:   2024-04-07T08:16:24+0200
 
 # WORKAROUND: lenovo uefi does not support the same loader for different entries
 
@@ -12,6 +12,6 @@ Operation = Upgrade
 Target = linux
 
 [Action]
-Description = Copy vmlinux-linux to vmlinuz-linux-fallback...
+Description = Copy vmlinuz-linux to vmlinuz-linux-fallback...
 When = PostTransaction
 Exec = /usr/bin/cp -u /boot/vmlinuz-linux /boot/vmlinuz-linux-fallback
