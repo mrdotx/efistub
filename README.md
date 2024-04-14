@@ -4,11 +4,11 @@
 
 shell script to create efi boot entries with efibootmgr
 
-| folder name | comment                                                                 |
-| :---------- | :---------------------------------------------------------------------- |
-| examples    | config files for boot entries, the order of the files is the boot order |
+| folder   | comment                                                                 |
+| :------- | :---------------------------------------------------------------------- |
+| examples | config files for boot entries, the order of the files is the boot order |
 
-| name                    | comment                                                                       |
+| file                    | comment                                                                       |
 | :---------------------- | :---------------------------------------------------------------------------- |
 | 98-lenovo_fallback.hook | workaround lenovo uefi linux fallback loader                                  |
 | 99-efistub.hook         | hook to update efi boot entries on kernel update with pacman                  |
