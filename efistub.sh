@@ -3,23 +3,26 @@
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # github: https://github.com/mrdotx/efistub
-# date:   2024-02-23T16:43:12+0100
+# date:   2025-05-29T05:07:07+0200
 
 config_directory="$(dirname "$0")/entries"
 
 script=$(basename "$0")
 help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
   Usage:
-    $script <path> [-b]
+    $script <path> <entries> [-b]
 
   Settings:
-  <path> = directory with config files
-           (default: $config_directory)
-  [-b]   = set next boot entry
+  <path>    = directory with config files
+              (default: $config_directory)
+  <entries> = boot entries to delete
+  [-b]      = set next boot entry
 
   Examples:
     $script
     $script /boot/entries
+    $script 0000 0001 0002 0003
+    $script /boot/entries 0000 0001 0002 0003
     $script -b"
 
 # efibootmgr functions
@@ -70,7 +73,7 @@ set_boot_next() {
 }
 
 delete_boot_entries() {
-    for i in $(get_entries)
+    for i in $@
     do
         printf "  -> %s\n" "$(get_entries --hex "$i")"
         efibootmgr \
@@ -143,8 +146,9 @@ case "$1" in
     *)
         check_root
 
-        [ -n "$1" ] \
-            && config_directory="$1"
+        [ -d "$1" ] \
+            && config_directory="$1" \
+            && shift
 
         if [ "$(find -L "$config_directory" \
                 -maxdepth 1 \
@@ -153,7 +157,7 @@ case "$1" in
                 -print \
                 -quit | wc -l)" -eq 1 ]; then
             printf "==> delete old boot entries\n"
-            delete_boot_entries
+            delete_boot_entries "$@"
             printf "==> create new boot entries\n"
             create_boot_entries
             printf "==> create boot order\n"
