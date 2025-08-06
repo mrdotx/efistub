@@ -2,8 +2,8 @@
 
 # path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
-# github: https://github.com/mrdotx/efistub
-# date:   2025-05-29T05:07:07+0200
+# url:    https://github.com/mrdotx/efistub
+# date:   2025-08-06T05:15:58+0200
 
 config_directory="$(dirname "$0")/entries"
 
