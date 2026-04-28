@@ -4,9 +4,9 @@
 
 shell script to create efi boot entries with efibootmgr
 
-| folder   | comment                                                                 |
-| :------- | :---------------------------------------------------------------------- |
-| examples | config files for boot entries, the order of the files is the boot order |
+| directory   | comment                                                                 |
+| :---------- | :---------------------------------------------------------------------- |
+| examples    | config files for boot entries, the order of the files is the boot order |
 
 | file                    | comment                                                                       |
 | :---------------------- | :---------------------------------------------------------------------------- |
@@ -26,4 +26,4 @@ values and defaults:
 
 ## install pacman hook
 
-- copy 99-efistub.hook to folder /etc/pacman.d/hooks
+- copy 99-efistub.hook to directory /etc/pacman.d/hooks
