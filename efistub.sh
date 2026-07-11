@@ -1,12 +1,17 @@
 #!/bin/sh
 
-# path:   /home/klassiker/.local/share/repos/efistub/efistub.sh
+# path:   /home/klassiker/Projects/repos/efistub/efistub.sh
 # author: klassiker [mrdotx]
 # url:    https://github.com/mrdotx/efistub
-# date:   2025-08-06T05:15:58+0200
+# date:   2026-07-11T03:49:02+0200
 
+# use standard C locale to avoid locale-specific issues and improve performance
+export LC_ALL=C LANG=C
+
+# config
 config_directory="$(dirname "$0")/entries"
 
+# help
 script=$(basename "$0")
 help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
   Usage:
@@ -24,6 +29,27 @@ help="$script [-h/--help] -- script to create efi boot entries with efibootmgr
     $script 0000 0001 0002 0003
     $script /boot/entries 0000 0001 0002 0003
     $script -b"
+
+# helper functions
+check_root() {
+    [ "$(id -u)" -ne 0 ] \
+        && printf "this script needs root privileges to run\n" \
+        && exit 1
+}
+
+pivot() {
+    printf "%s\n" "$1" \
+        | awk '{gsub(/^ +| +$/,"")} !/^($|#)/ {print $0}' \
+        | while IFS= read -r line; do
+            [ -n "$i" ] \
+                && printf "%s" "$2" "$line"
+            [ -z "$i" ] \
+                && printf "%s" "$line" \
+                && i=1
+        done
+    printf "\n"
+    unset i
+}
 
 # efibootmgr functions
 get_entries() {
@@ -108,27 +134,6 @@ create_boot_order() {
         --quiet >/dev/null 2>&1
         printf "  -> %s\n" "$boot_order"
     unset boot_order
-}
-
-# helper functions
-check_root() {
-    [ "$(id -u)" -ne 0 ] \
-        && printf "this script needs root privileges to run\n" \
-        && exit 1
-}
-
-pivot() {
-    printf "%s\n" "$1" \
-        | awk '{gsub(/^ +| +$/,"")} !/^($|#)/ {print $0}' \
-        | while IFS= read -r line; do
-            [ -n "$i" ] \
-                && printf "%s" "$2" "$line"
-            [ -z "$i" ] \
-                && printf "%s" "$line" \
-                && i=1
-        done
-    printf "\n"
-    unset i
 }
 
 # main
